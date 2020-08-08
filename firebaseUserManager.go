@@ -12,6 +12,7 @@ import (
 
 	firebase "firebase.google.com/go"
 	"firebase.google.com/go/auth"
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/thirupathyks/firebaseUserAPI/models"
 )
@@ -84,7 +85,11 @@ func SignInUserHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		defer resp.Body.Close()
 		body, _ := ioutil.ReadAll(resp.Body)
-		fmt.Fprintf(w, "%s", string(body))
+		if resp.Status == "400 Bad Request" {
+			http.Error(w, string(body), 400)
+		} else {
+			fmt.Fprintf(w, "%s", string(body))
+		}
 	}
 }
 
@@ -112,5 +117,8 @@ func main() {
 	r.HandleFunc("/createuser", CreateUserHandler)
 	r.HandleFunc("/updateuser", UpdateUserHandler)
 	r.HandleFunc("/signinuser", SignInUserHandler)
-	http.ListenAndServe(":8080", r)
+	headers := handlers.AllowedHeaders([]string{"Content-Type", "Authorization"})
+	methods := handlers.AllowedMethods([]string{"GET", "POST"})
+	origins := handlers.AllowedOrigins([]string{"*"})
+	http.ListenAndServe(":8081", handlers.CORS(headers, methods, origins)(r))
 }
