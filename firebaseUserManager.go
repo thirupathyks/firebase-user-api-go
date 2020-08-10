@@ -14,7 +14,7 @@ import (
 	"firebase.google.com/go/auth"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
-	"github.com/thirupathyks/firebaseUserAPI/models"
+	"github.com/thirupathyks/firebase-user-api-go/models"
 )
 
 var webAPIKey = os.Getenv("FIREBASE_WEB_API_KEY")
